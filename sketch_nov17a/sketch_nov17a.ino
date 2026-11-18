@@ -216,6 +216,22 @@ void handleLimpiarDatos() {
   server.send(200, "text/plain", "OK");
 }
 
+void handleResetDefaults() {
+  prefs.begin("smartcooler", false);
+  prefs.clear(); // Borra las preferencias guardadas en NVS
+  prefs.end();
+
+  // Restablecer variables en memoria RAM a los valores originales por defecto
+  tempMin = 2.0;
+  tempMax = 8.0;
+  intervaloSeg = 5;
+  retardoAlertaSeg = 30;
+  inicioExcursionMs = 0;
+
+  Serial.println("Configuracion restablecida a valores de fabrica desde la web.");
+  server.send(200, "text/plain", "OK");
+}
+
 void setup() {
   Serial.begin(115200);
   delay(300);
@@ -264,6 +280,8 @@ void setup() {
   server.on("/config", HTTP_GET, handleGetConfig);
   server.on("/config", HTTP_POST, handlePostConfig);
   server.on("/limpiar", HTTP_POST, handleLimpiarDatos);
+  server.on("/reset-defaults", HTTP_POST, handleResetDefaults);
+
 
   server.begin();
 }
